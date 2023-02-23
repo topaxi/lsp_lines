@@ -174,7 +174,7 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
           local vline = {}
           vim.list_extend(vline, left)
           vim.list_extend(vline, center)
-          vim.list_extend(vline, { { msg_line, highlight_groups[diagnostic.severity] } })
+          vim.list_extend(vline, { { string.format("%s (%s)", msg_line, diagnostic.source), highlight_groups[diagnostic.severity] } })
 
           table.insert(virt_lines, vline)
 
