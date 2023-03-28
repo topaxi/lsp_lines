@@ -7,8 +7,11 @@ local function render_current_line(diagnostics, ns, bufnr, opts)
   local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
 
   for _, diagnostic in pairs(diagnostics) do
-    local show = diagnostic.end_lnum and (lnum >= diagnostic.lnum and lnum <= diagnostic.end_lnum) or (lnum == diagnostic.lnum)
-    if show then table.insert(current_line_diag, diagnostic) end
+    local show = diagnostic.end_lnum and (lnum >= diagnostic.lnum and lnum <= diagnostic.end_lnum)
+      or (lnum == diagnostic.lnum)
+    if show then
+      table.insert(current_line_diag, diagnostic)
+    end
   end
 
   render.show(ns, bufnr, current_line_diag, opts)
@@ -25,6 +28,12 @@ M.setup = function()
     ---@param diagnostics table
     ---@param opts boolean
     show = function(namespace, bufnr, diagnostics, opts)
+      -- lazy.nvim uses LSP diagnostics to show update state and renders
+      -- it via virtual text even if it is disabled.
+      if bufnr == ((require("lazy.view") or {}).view or {}).buf then
+        return
+      end
+
       local ns = vim.diagnostic.get_namespace(namespace)
       if not ns.user_data.virt_lines_ns then
         ns.user_data.virt_lines_ns = vim.api.nvim_create_namespace("")
@@ -34,10 +43,10 @@ M.setup = function()
       if opts.virtual_lines.only_current_line then
         vim.api.nvim_create_autocmd("CursorMoved", {
           buffer = bufnr,
-          callback = function ()
+          callback = function()
             render_current_line(diagnostics, ns.user_data.virt_lines_ns, bufnr, opts)
           end,
-          group = "LspLines"
+          group = "LspLines",
         })
         -- Also show diagnostics for the current line before the first CursorMoved event
         render_current_line(diagnostics, ns.user_data.virt_lines_ns, bufnr, opts)
@@ -50,7 +59,7 @@ M.setup = function()
     hide = function(namespace, bufnr)
       local ns = vim.diagnostic.get_namespace(namespace)
       if ns.user_data.virt_lines_ns then
-        render.hide(ns.user_data.virt_lines_ns, bufnr )
+        render.hide(ns.user_data.virt_lines_ns, bufnr)
         vim.api.nvim_clear_autocmds({ group = "LspLines" })
       end
     end,
