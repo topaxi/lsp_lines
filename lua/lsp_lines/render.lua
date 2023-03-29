@@ -170,11 +170,17 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
         -- c. Is just one line.
         -- d. Is not an overlap.
 
+        local i = 0 -- I'm no lua expert..
         for msg_line in diagnostic.message:gmatch("([^\n]+)") do
+          -- Only print diagnostic source on first line
+          if i == 0 and diagnostic.source then
+            msg_line = string.format("%s (%s)", msg_line, diagnostic.source)
+          end
+
           local vline = {}
           vim.list_extend(vline, left)
           vim.list_extend(vline, center)
-          vim.list_extend(vline, { { string.format("%s (%s)", msg_line, diagnostic.source), highlight_groups[diagnostic.severity] } })
+          vim.list_extend(vline, { { msg_line, highlight_groups[diagnostic.severity] } })
 
           table.insert(virt_lines, vline)
 
@@ -184,6 +190,8 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
           else
             center = { { "      ", "" } }
           end
+
+          i = i + 1
         end
       end
     end
