@@ -174,10 +174,18 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
         -- c. Is just one line.
         -- d. Is not an overlap.
 
-        local i = 0 -- I'm no lua expert..
-        for msg_line in diagnostic.message:gmatch("([^\n]+)") do
+        --- @type string
+        local msg
+        if diagnostic.code then
+          msg = string.format("%s: %s", diagnostic.code, diagnostic.message)
+        else
+          msg = diagnostic.message
+        end
+
+        local line_nr = 1
+        for msg_line in msg:gmatch("([^\n]+)") do
           -- Only print diagnostic source on first line
-          if i == 0 and diagnostic.source then
+          if line_nr == 1 and diagnostic.source then
             msg_line = string.format("%s (%s)", msg_line, diagnostic.source)
           end
 
@@ -195,7 +203,7 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
             center = { { "      ", "" } }
           end
 
-          i = i + 1
+          line_nr = line_nr + 1
         end
       end
     end
