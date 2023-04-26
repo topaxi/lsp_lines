@@ -26,7 +26,7 @@ M.setup = function()
     ---@param namespace number
     ---@param bufnr number
     ---@param diagnostics table
-    ---@param opts boolean
+    ---@param opts table
     show = function(namespace, bufnr, diagnostics, opts)
       -- lazy.nvim uses LSP diagnostics to show update state and renders
       -- it via virtual text even if it is disabled.

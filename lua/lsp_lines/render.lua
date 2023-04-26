@@ -56,6 +56,10 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
     opts = { opts, "t", true },
   })
 
+  if opts.virtual_lines.filter then
+    diagnostics = vim.tbl_filter(opts.virtual_lines.filter, diagnostics)
+  end
+
   table.sort(diagnostics, function(a, b)
     if a.lnum ~= b.lnum then
       return a.lnum < b.lnum
