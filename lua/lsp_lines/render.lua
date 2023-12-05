@@ -183,7 +183,7 @@ function M.show(namespace, bufnr, diagnostics, opts, source)
 
         --- @type string
         local msg
-        if diagnostic.code then
+        if opts.virtual_lines.show_diagnostics_code and diagnostic.code then
           msg = string.format("%s: %s", diagnostic.code, diagnostic.message)
         else
           msg = diagnostic.message

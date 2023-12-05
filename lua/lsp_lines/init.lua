@@ -22,6 +22,7 @@ end
 
 ---@class OptsVirtualLines
 ---@field filter fun(diagnostics: table): boolean Filter function for diagnostics
+---@field show_diagnostics_code boolean Show diagnostics code
 ---@field only_current_line boolean Only render for current line
 ---@field highlight_whole_line boolean Highlight empty space to the left of a diagnostic
 
