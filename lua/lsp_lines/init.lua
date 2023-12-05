@@ -21,6 +21,7 @@ end
 ---@field virtual_lines OptsVirtualLines Options for lsp_lines plugin
 
 ---@class OptsVirtualLines
+---@field filter fun(diagnostics: table): boolean Filter function for diagnostics
 ---@field only_current_line boolean Only render for current line
 ---@field highlight_whole_line boolean Highlight empty space to the left of a diagnostic
 
